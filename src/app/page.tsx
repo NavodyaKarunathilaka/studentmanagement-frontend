@@ -1,69 +1,78 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
+  const { token, isAdmin, email, isLoading } = useAuth();
+
+  if (isLoading) return null;
+
+  if (!token) {
+    return (
+      <div className="hero">
+        <span className="eyebrow">Student Management System</span>
+        <h1 className="hero-title">Run your courses and students in one place.</h1>
+        <p className="hero-subtitle">
+          A lightweight demo app for managing student records, course catalogs, and
+          enrollment — backed by a Spring Boot REST API.
+        </p>
+        <div className="hero-actions">
+          <Link href="/login">
+            <button className="btn-primary btn-lg">Login</button>
+          </Link>
+          <Link href="/register">
+            <button className="btn-lg">Create an account</button>
+          </Link>
+        </div>
+
+        <div className="feature-grid">
+          <div className="card">
+            <h2>👩‍🎓 Students</h2>
+            <p className="muted">Admins can add, update, and remove student records.</p>
+          </div>
+          <div className="card">
+            <h2>📚 Courses</h2>
+            <p className="muted">Browse the full course catalog, managed by admins.</p>
+          </div>
+          <div className="card">
+            <h2>✅ Enrollment</h2>
+            <p className="muted">Track which students are enrolled in which courses.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div>
+      <h1>Welcome back{email ? `, ${email}` : ""}</h1>
+      <p className="muted" style={{ marginBottom: "1.5rem" }}>
+        {isAdmin
+          ? "You're logged in as an admin. Manage students and courses below."
+          : "Browse available courses and check your enrollment status."}
+      </p>
+
+      <div className="feature-grid">
+        {isAdmin && (
+          <Link href="/students" className="dashboard-card">
+            <div className="card">
+              <h2>👩‍🎓 Students</h2>
+              <p className="muted">View, add, update, and delete student records.</p>
+            </div>
+          </Link>
+        )}
+        <Link href="/courses" className="dashboard-card">
+          <div className="card">
+            <h2>📚 Courses</h2>
+            <p className="muted">
+              {isAdmin
+                ? "Create and manage the course catalog."
+                : "See all courses and your enrollment status."}
+            </p>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }
