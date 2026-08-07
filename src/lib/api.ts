@@ -2,7 +2,14 @@ import type { ApiResponse } from "./types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";
 
-export class ApiError extends Error {}
+export class ApiError extends Error {
+  constructor(message: string, public readonly status?: number) {
+    super(message);
+  }
+}
+
+/** Fired when the server returns 401 — AuthProvider listens and auto-logs out. */
+export const AUTH_EXPIRED_EVENT = "sms:auth-expired";
 
 async function request<T>(
   path: string,
@@ -25,7 +32,10 @@ async function request<T>(
   }
 
   if (!res.ok) {
-    throw new ApiError(body?.message ?? `Request failed (${res.status})`);
+    if (res.status === 401 && typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent(AUTH_EXPIRED_EVENT));
+    }
+    throw new ApiError(body?.message ?? `Request failed (${res.status})`, res.status);
   }
 
   return body?.data as T;
