@@ -90,7 +90,7 @@ function EditForm({ id }: { id: string }) {
   if (loading) return <p className="muted">Loading student...</p>;
 
   return (
-    <div>
+    <div className="form-page">
       <h1>Edit Student</h1>
       <form onSubmit={onSubmit}>
         {error && <p className="error">{error}</p>}

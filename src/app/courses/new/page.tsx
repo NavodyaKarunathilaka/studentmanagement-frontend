@@ -40,7 +40,7 @@ function NewCourseForm() {
   };
 
   return (
-    <div>
+    <div className="form-page">
       <h1>Add Course</h1>
       <form onSubmit={onSubmit}>
         {error && <p className="error">{error}</p>}
