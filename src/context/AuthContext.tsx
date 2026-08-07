@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { api, AUTH_EXPIRED_EVENT } from "@/lib/api";
 import type { LoginResponse, Role } from "@/lib/types";
 
 interface AuthState {
@@ -39,6 +39,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(readStoredAuth());
     setIsLoading(false);
   }, []);
+
+  // Auto-logout when any API call receives a 401 (expired / invalid token)
+  useEffect(() => {
+    const handle = () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setState(EMPTY_STATE);
+      router.replace("/login");
+    };
+    window.addEventListener(AUTH_EXPIRED_EVENT, handle);
+    return () => window.removeEventListener(AUTH_EXPIRED_EVENT, handle);
+  }, [router]);
 
   const login = async (email: string, password: string) => {
     const data = await api.post<LoginResponse>("/api/auth/login", { email, password });
