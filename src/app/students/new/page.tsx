@@ -29,7 +29,7 @@ function NewStudentForm() {
   };
 
   return (
-    <div>
+    <div className="form-page">
       <h1>Add Student</h1>
       <form onSubmit={onSubmit}>
         {error && <p className="error">{error}</p>}
